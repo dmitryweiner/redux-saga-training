@@ -1,0 +1,7 @@
+.filter {
+    margin: 10px;
+}
+
+.active {
+    text-decoration: underline;
+}
