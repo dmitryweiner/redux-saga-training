@@ -1,10 +1,9 @@
 import React from "react";
 import {useSelector} from "react-redux";
-import {selectFilteredItems} from "./listSlice";
 import ListItem from "./ListItem";
 
 export default function List() {
-    const list = useSelector(selectFilteredItems);
+    const list = useSelector(state => state.list.filteredList);
     return (
         <div className="list">
             {

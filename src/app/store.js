@@ -1,10 +1,20 @@
-import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
-import listReducer from '../features/list/listSlice';
+import {configureStore, getDefaultMiddleware} from '@reduxjs/toolkit';
+import listReducer, {listSaga} from '../features/list/listSlice';
+import createSagaMiddleware from 'redux-saga';
+import {all} from "@redux-saga/core/effects";
+const sagaMiddleware = createSagaMiddleware();
+const middleware = [...getDefaultMiddleware({ thunk: true }), sagaMiddleware];
 
 export default configureStore({
   reducer: {
-    counter: counterReducer,
     list: listReducer
   },
+  middleware
 });
+
+function * rootSaga() {
+  yield all([
+    listSaga()
+  ]);
+}
+sagaMiddleware.run(rootSaga);

@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { createSlice } from '@reduxjs/toolkit';
+import {put, select, takeEvery} from "@redux-saga/core/effects";
 
 export const FilterValue = {
     ALL: 1,
@@ -11,6 +12,7 @@ export const listSlice = createSlice({
     name: 'list',
     initialState: {
         list: [],
+        filteredList: [],
         filter: FilterValue.ALL
     },
     reducers: {
@@ -38,6 +40,9 @@ export const listSlice = createSlice({
         setFilter: (state, action) => {
             state.filter = action.payload;
         },
+        setFilteredList: (state, action) => {
+            state.filteredList = action.payload;
+        }
     },
 });
 
@@ -46,6 +51,7 @@ export const actions = listSlice.actions;
 export default listSlice.reducer;
 
 const listSelector = state => state.list.list;
+
 const filterSelector = state => state.list.filter;
 
 export const selectFilteredItems = createSelector(
@@ -74,3 +80,20 @@ export const selectUndoneItemsCount = createSelector(
     listSelector,
     list => list.filter(item => !item.isDone).length
 );
+
+export function *listSaga() {
+    yield takeEvery(
+        [
+            actions.setFilter.type,
+            actions.add.type,
+            actions.delete.type,
+            actions.toggleDone.type,
+        ],
+        filterChangedSaga
+    );
+}
+
+function *filterChangedSaga(action) {
+    const filteredList = yield select(selectFilteredItems);
+    yield put(actions.setFilteredList(filteredList));
+}
