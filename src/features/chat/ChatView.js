@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     actions,
-    getChatInfo,
     getMessages,
     selectCurrentChat,
     selectMessages,
@@ -15,22 +14,18 @@ export default function ChatView({ match }) {
     const { id } = match.params;
     const [ message, setMessage ] = useState('');
     const dispatch = useDispatch();
-    const isLogged = useSelector(selectIsLogged);
     const currentChat = useSelector(selectCurrentChat);
     const messages = [...useSelector(selectMessages)].reverse();
 
     useEffect(() => {
-        dispatch(actions.setMessages([]));
-        dispatch(getMessages(id));
-        dispatch(getChatInfo(id));
-
+        dispatch(actions.startLoadingChatData(id));
         const timer = setInterval(() => {
             dispatch(getMessages(id));
         }, 1000);
 
         return () => clearInterval(timer);
         // eslint-disable-next-line
-    }, [isLogged]);
+    }, []);
 
     function handleMessageSend(e) {
         dispatch(sendMessage({

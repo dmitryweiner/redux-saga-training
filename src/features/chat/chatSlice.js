@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import apiService, {
-    getInitialApiState
+    getInitialApiState, getLoadingApiState, getSuccessApiState
 } from "../../apiService";
 import { selectIsLogged } from '../auth/authSlice';
 import { selectCurrentUser } from '../user/userSlice';
@@ -10,12 +10,20 @@ const chatSlice = createSlice({
     initialState: {
         apiState: getInitialApiState(),
         currentChat: null,
+        currentChatId: null,
         chats: [],
         messages: [],
         participants: [],
         searchChats: []
     },
     reducers: {
+        startLoadingChatData: (state, action) => {
+            state.apiState = getLoadingApiState();
+            state.currentChatId = action.payload;
+        },
+        stopLoadingChatData: (state) => {
+            state.apiState = getSuccessApiState(state.apiState);
+        },
         setChats: (state, action) => {
             state.chats = action.payload;
         },
@@ -54,6 +62,7 @@ export const getMyChats = () => (dispatch, getState) => {
 };
 
 export const getChatInfo = chatId => (dispatch, getState) => {
+    console.log(selectIsLogged(getState()));
     if (!selectIsLogged(getState())) return;
 
     apiService.chat.getInfo(chatId)
@@ -113,6 +122,8 @@ export const selectMessages = state => state.chat.messages;
 export const selectMyChats = state => state.chat.chats;
 
 export const selectCurrentChat = state => state.chat.currentChat;
+
+export const selectCurrentChatId = state => state.chat.currentChatId;
 
 export const selectParticipants = state => state.chat.participants;
 

@@ -2,11 +2,12 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { routerMiddleware, connectRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import createSagaMiddleware from 'redux-saga';
-import {all} from "@redux-saga/core/effects";
+import { all } from "@redux-saga/core/effects";
 import registrationReducer from '../features/registration/registrationSlice';
 import authReducer from '../features/auth/authSlice';
 import userReducer from '../features/user/userSlice';
 import chatReducer from '../features/chat/chatSlice';
+import { chatSaga } from '../features/chat/chatSaga';
 
 export const history = createBrowserHistory();
 const sagaMiddleware = createSagaMiddleware();
@@ -28,9 +29,10 @@ export default configureStore({
     middleware
 });
 
-function * rootSaga() {
-  yield all([
-
-  ]);
+function* rootSaga() {
+    yield all([
+        chatSaga()
+    ]);
 }
+
 sagaMiddleware.run(rootSaga);
