@@ -62,22 +62,11 @@ export const getMyChats = () => (dispatch, getState) => {
 };
 
 export const getChatInfo = chatId => (dispatch, getState) => {
-    console.log(selectIsLogged(getState()));
     if (!selectIsLogged(getState())) return;
 
     apiService.chat.getInfo(chatId)
         .then(response => response.data)
-        .then(chat => {
-            dispatch(actions.setCurrentChat(chat));
-            return chat;
-        })
-        .then(chat => {
-            const participantsIds = chat.participants;
-            return Promise.all(
-                participantsIds.map(id => apiService.user.getById(id).then(response => response.data))
-            );
-        })
-        .then(participants => dispatch(actions.setParticipants(participants)));
+        .then(chat => dispatch(actions.setCurrentChat(chat)));
 }
 
 export const getMessages = chatId => (dispatch, getState) => {
@@ -85,7 +74,6 @@ export const getMessages = chatId => (dispatch, getState) => {
 
     apiService.message.getMessages(chatId)
         .then(response => response.data)
-        .then(messages => injectUserData(messages, selectParticipants(getState())))
         .then(messages => dispatch(actions.setMessages(messages)));
 }
 
@@ -105,9 +93,9 @@ export const joinChat = chatId => dispatch => {
         .then(() => dispatch(getMyChats()));
 };
 
-function injectUserData(messages, participants) {
-    if (!participants || participants.lenght === 0) return messages;
-
+export const selectMessages = state => {
+    const participants = selectParticipants(state);
+    const messages = state.chat.messages;
     return messages.map(message => {
         const user = participants.find(user => user.id === message.userId);
         return {
@@ -116,8 +104,6 @@ function injectUserData(messages, participants) {
         };
     });
 }
-
-export const selectMessages = state => state.chat.messages;
 
 export const selectMyChats = state => state.chat.chats;
 

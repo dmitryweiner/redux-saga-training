@@ -7,7 +7,6 @@ import {
     selectMessages,
     sendMessage
 } from './chatSlice';
-import { selectIsLogged } from '../auth/authSlice';
 import MessageList from '../../components/MessageList';
 
 export default function ChatView({ match }) {
