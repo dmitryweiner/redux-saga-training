@@ -7,6 +7,6 @@ export default function Chat({ id, title, clickHandle }) {
     }
 
     return <li>
-        <a href="#" onClick={innerClickHandle}>{title}</a>
+        <a href="/" onClick={innerClickHandle}>{title}</a>
     </li>;
 }

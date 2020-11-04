@@ -17,7 +17,8 @@ export default function ChatView({ match }) {
     const messages = [...useSelector(selectMessages)].reverse();
 
     useEffect(() => {
-        dispatch(actions.startLoadingChatData(id));
+        dispatch(actions.prepareChatData(id));
+
         const timer = setInterval(() => {
             dispatch(getMessages(id));
         }, 1000);
